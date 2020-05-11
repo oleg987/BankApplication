@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BankApplication.Models
 {
-    public class Bank
+    public partial class Bank
     {
+        public Bank()
+        {
+            Branch = new HashSet<Branch>();
+        }
+
         public int Id { get; set; }
         public string Title { get; set; }
         public string Address { get; set; }
 
-        public Bank()
-        {
-            Id = 1;
-            Title = "MegaBank";
-            Address = "WallStreet 1";
-        }
+        public virtual ICollection<Branch> Branch { get; set; }
     }
 }

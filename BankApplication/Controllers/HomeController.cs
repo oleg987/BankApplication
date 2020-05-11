@@ -6,32 +6,49 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BankApplication.Models;
+using BankApplication.Models.Repository;
+using BankApplication.Models.Repository.FakeStorage;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BankApplication.Controllers
-{
+{    
     public class HomeController : Controller
     {
+        private IBankRepository repository;
+
+        public HomeController(IBankRepository repository)
+        {
+            this.repository = repository;
+        }
+
+        [Authorize]
         public IActionResult Index()
         {
-            Bank bank = new Bank();
+            var bank = repository.GetBank();
 
             return View(bank);
+        }
+
+        public IActionResult AddBranch()
+        {
+            var branch = new Branch();
+
+            return View(branch);
+        }
+
+        [HttpPost]
+        public IActionResult AddBranch(Branch branch)
+        {
+            var bank = repository.GetBank();
+            bank.Branch.Add(branch);
+            repository.Update(bank);
+
+            return View("Index", bank);
         }
 
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        public IActionResult Page()
-        {
-            List<Bank> banks = new List<Bank>();
-
-            banks.Add(new Bank());
-            banks.Add(new Bank() { Title = "GigaBank"});
-            banks.Add(new Bank() { Title = "TeraBank"});
-
-            return View(banks);
-        }
+        }        
     }
 }

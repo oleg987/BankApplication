@@ -2,9 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankApplication.Models;
+using BankApplication.Models.Repository;
+using BankApplication.Models.Repository.FakeStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +29,31 @@ namespace BankApplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(options => options.EnableEndpointRouting = false);
+
+            services.AddDbContext<SecurityDbContext>(options =>
+            {
+                options.UseNpgsql(Configuration["IdentityStorage:ConnectionString"]);
+            });
+
+            services.AddIdentity<User, IdentityRole>(options =>
+                {
+                    options.User.RequireUniqueEmail = true;
+
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireDigit = false;
+                })
+                .AddEntityFrameworkStores<SecurityDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddDbContext<AplicationDataContext>(options =>
+            {
+                options.UseNpgsql(Configuration["DataStorage:ConnectionString"]);
+            });
+
+            services.AddTransient<IBankRepository, EFBankStorage>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,6 +62,8 @@ namespace BankApplication
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
             app.UseStatusCodePages();
+
+            app.UseAuthentication();
 
             // host/{controller=Home}/{action=Index}/{id?}
             app.UseMvcWithDefaultRoute();

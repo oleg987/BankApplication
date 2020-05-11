@@ -1,10 +1,25 @@
-﻿@{
+﻿@model Bank
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
     <div class="text-center">
         <h1 class="display-4">Welcome</h1>
-        <p>Название: Какойто банк</p>
-        <p>Аддресс: Дерибасовская 45</p>
-        <p></p>
+        <p>@Model.Title</p>
+        <p>Адрес: @Model.Address</p>
+
+        <a asp-action="AddBranch">Add Branch</a>
+
+        @if (Model.Branch != null)
+        {
+            foreach (Branch branch in Model.Branch)
+            {
+                <br />
+                <p>@branch.Title</p>
+                <p>@branch.Address</p>
+            }
+        }
+
+
     </div>

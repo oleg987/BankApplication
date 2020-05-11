@@ -1,0 +1,15 @@
+﻿@model Branch
+
+@{
+    ViewData["Title"] = "AddBranch";
+}
+
+<h1>AddBranch</h1>
+
+<form asp-controller="Home" asp-action="AddBranch" method="post">
+    <input asp-for="@Model.Title" />
+    <input asp-for="@Model.Address" />
+
+    <button type="submit">Save</button>
+</form>
+
