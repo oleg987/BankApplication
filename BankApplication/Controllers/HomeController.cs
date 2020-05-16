@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BankApplication.Models;
 using BankApplication.Models.Repository;
-using BankApplication.Models.Repository.FakeStorage;
+
 using Microsoft.AspNetCore.Authorization;
+using BankApplication.Models.Entities;
 
 namespace BankApplication.Controllers
 {    
     public class HomeController : Controller
     {
-        private IBankRepository repository;
+        private IRepository<Bank> repository;
 
-        public HomeController(IBankRepository repository)
+        public HomeController(IRepository<Bank> repository)
         {
             this.repository = repository;
         }
@@ -24,7 +25,7 @@ namespace BankApplication.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            var bank = repository.GetBank();
+            var bank = repository.GetAll().FirstOrDefault();
 
             return View(bank);
         }
@@ -39,7 +40,7 @@ namespace BankApplication.Controllers
         [HttpPost]
         public IActionResult AddBranch(Branch branch)
         {
-            var bank = repository.GetBank();
+            var bank = repository.GetAll().FirstOrDefault();
             bank.Branch.Add(branch);
             repository.Update(bank);
 

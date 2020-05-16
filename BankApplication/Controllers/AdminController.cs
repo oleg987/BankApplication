@@ -3,23 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankApplication.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private UserManager<User> manager;
+        private UserManager<User> userManager;
+        private RoleManager<IdentityRole> roleManager;
 
-        public AdminController(UserManager<User> manager)
+        public AdminController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            this.manager = manager;
+            this.userManager = userManager;
+            this.roleManager = roleManager;
         }
 
         public IActionResult Index()
         {
-            return View(manager.Users);
+            return View(userManager);
         }
 
         public IActionResult Create() => View();
@@ -35,7 +39,7 @@ namespace BankApplication.Controllers
                     Email = model.Email,
                 };
 
-                IdentityResult result = await manager.CreateAsync(user, model.Password);
+                IdentityResult result = await userManager.CreateAsync(user, model.Password);
 
                 if(result.Succeeded)
                 {
@@ -50,6 +54,37 @@ namespace BankApplication.Controllers
                 }                
             }
             return View(model);
+        }
+
+        public IActionResult Roles() => View(roleManager.Roles);
+
+        public IActionResult CreateRole() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRole(RoleCreateModel model)
+        {
+            if (ModelState.IsValid && !roleManager.RoleExistsAsync(model.Name).GetAwaiter().GetResult())
+            {
+                var result = await roleManager.CreateAsync(new IdentityRole(model.Name));
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Roles");
+                }
+                else
+                {
+                    AddErrorsFromResult(result);
+                }
+            }
+            return View(model);
+        }
+
+        private void AddErrorsFromResult(IdentityResult result)
+        {
+            foreach(IdentityError error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
         }
     }
 }

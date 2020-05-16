@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankApplication.Models;
+using BankApplication.Models.Entities;
 using BankApplication.Models.Repository;
-using BankApplication.Models.Repository.FakeStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -48,12 +48,12 @@ namespace BankApplication
                 .AddEntityFrameworkStores<SecurityDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddDbContext<AplicationDataContext>(options =>
+            services.AddDbContext<DataDbContext>(options =>
             {
                 options.UseNpgsql(Configuration["DataStorage:ConnectionString"]);
             });
 
-            services.AddTransient<IBankRepository, EFBankStorage>();
+            services.AddTransient<IRepository<Bank>, EFBankStorage>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

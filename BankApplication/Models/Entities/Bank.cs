@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BankApplication.Models
+namespace BankApplication.Models.Entities
 {
     public partial class Bank
     {
