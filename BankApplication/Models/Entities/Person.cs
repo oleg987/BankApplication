@@ -16,7 +16,7 @@ namespace BankApplication.Models.Entities
         public string Email { get; set; }
         public string Phone { get; set; }
         public string PassportNumber { get; set; }
-        public string PassoprtSeries { get; set; }
+        public string PassportSeries { get; set; }
         public string Tin { get; set; }
 
         public string UserId { get; set; }

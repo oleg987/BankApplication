@@ -21,8 +21,7 @@ namespace BankApplication.Controllers
         {
             this.repository = repository;
         }
-
-        [Authorize]
+        
         public IActionResult Index()
         {
             var bank = repository.GetAll().FirstOrDefault();
