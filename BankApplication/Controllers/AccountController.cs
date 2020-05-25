@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BankApplication.Models;
 using BankApplication.Models.Entities;
+using BankApplication.Models.Repository;
 using BankApplication.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,13 +18,13 @@ namespace BankApplication.Controllers
         #region Constructor
         private UserManager<User> userManager;
         private SignInManager<User> signInManager;
-        private DataDbContext ctx;
+        private IUserRepository userRepo;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, DataDbContext ctx)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IUserRepository userRepo)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
-            this.ctx = ctx;
+            this.userRepo = userRepo;
         }
         #endregion
 
@@ -73,33 +74,11 @@ namespace BankApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User()
-                {
-                    UserName = model.Login,
-                    Email = model.Email,
-                    PhoneNumber = model.Phone
-                };
+                var result = await userRepo.Create(model, "Client");
 
-                IdentityResult result = await userManager.CreateAsync(user, model.Password);
-                
-                if (result.Succeeded)
+                if (result)
                 {
-                    var person = new Person()
-                    {
-                        FirstName = model.FirstName,
-                        LastName = model.LastName,
-                        MiddleName = model.MiddleName,
-                        PassportSeries = model.PassportSeries,
-                        PassportNumber = model.PassportNumber,
-                        Tin = model.Tin,
-                        Email = model.Email,
-                        Phone = model.Phone,
-                        UserId = user.Id,
-                        Client = new Client() { RegistrationDate = DateTime.Now }
-                    };
-
-                    ctx.Persons.Add(person);
-                    await ctx.SaveChangesAsync();
+                    var user = await userManager.FindByEmailAsync(model.Email);
 
                     await signInManager.SignOutAsync();
                     var sign = await signInManager.PasswordSignInAsync(user, model.Password, false, false);
@@ -107,14 +86,7 @@ namespace BankApplication.Controllers
                     {
                         return Redirect("/");
                     }
-                }
-                else
-                {
-                    foreach (IdentityError error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
-                }
+                }                
             }
 
             return View(model);

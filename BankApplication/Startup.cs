@@ -54,6 +54,8 @@ namespace BankApplication
             });
 
             services.AddTransient<IRepository<Bank>, EFBankStorage>();
+
+            services.AddTransient<IUserRepository, EFUserRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
