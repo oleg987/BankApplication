@@ -70,7 +70,7 @@ namespace BankApplication.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(ClientCreateViewModel model)
+        public async Task<IActionResult> Register(UserCreateViewModel model)
         {
             if (ModelState.IsValid)
             {

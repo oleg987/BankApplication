@@ -53,9 +53,7 @@ namespace BankApplication
                 options.UseNpgsql(Configuration["DataStorage:ConnectionString"]);
             });
 
-            services.AddTransient<IRepository<Bank>, EFBankStorage>();
-
-            services.AddTransient<IUserRepository, EFUserRepository>();
+            services.AddTransient<UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

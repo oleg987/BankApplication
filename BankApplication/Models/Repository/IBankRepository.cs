@@ -1,4 +1,4 @@
-﻿using BankApplication.Models.ViewModels;
+﻿using BankApplication.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace BankApplication.Models.Repository
 {
-    public interface IUserRepository
+    public interface IBankRepository
     {
-        Task<bool> Create(UserCreateViewModel model, string role);
+        Bank Get();
+        void Update(Bank bank);
     }
 }

@@ -1,0 +1,61 @@
+﻿@model PersonIndexViewModel
+
+@{
+    ViewData["Title"] = "Person Info";
+}
+
+<h2>Person Info</h2>
+
+@if (!Model.IsDeleted)
+{
+    <a asp-action="Update" class="btn btn-warning">Update</a>
+
+    <form asp-action="Delete" method="post">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+
+    <table class="table table-striped table-bordered">
+        <tbody>
+            <tr>
+                <td>First Name:</td>
+                <td>@Model.FirstName</td>
+            </tr>
+            <tr>
+                <td>Middle Name:</td>
+                <td>@Model.MiddleName</td>
+            </tr>
+            <tr>
+                <td>Last Name:</td>
+                <td>@Model.LastName</td>
+            </tr>
+            <tr>
+                <td>Phone:</td>
+                <td>@Model.Phone</td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td>@Model.Email</td>
+            </tr>
+            <tr>
+                <td>Passport:</td>
+                <td>@Model.Passport</td>
+            </tr>
+            <tr>
+                <td>TIN:</td>
+                <td>@Model.Tin</td>
+            </tr>
+            <tr>
+                <td>Registration Date:</td>
+                <td>@Model.RegistrationDate.ToShortDateString()</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>Person was deleted. To restore this person click button "Restore"</h3>
+    <form asp-action="Restore" method="post">
+        <button type="submit" class="btn btn-success">Restore</button>
+    </form>
+}
+

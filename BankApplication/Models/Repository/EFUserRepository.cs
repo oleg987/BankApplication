@@ -15,15 +15,13 @@ namespace BankApplication.Models.Repository
         private SecurityDbContext securityCtx;
         private RoleManager<IdentityRole> roleManager;
 
-        public EFUserRepository(UserManager<User> userManager, DataDbContext dataCtx, SecurityDbContext securityCtx, RoleManager<IdentityRole> roleManager)
+        public EFUserRepository(DataDbContext dataCtx, SecurityDbContext securityCtx)
         {
-            this.userManager = userManager;
             this.dataCtx = dataCtx;
             this.securityCtx = securityCtx;
-            this.roleManager = roleManager;
         }
 
-        public async Task<bool> Create(ClientCreateViewModel model, string role)
+        public async Task<bool> Create(UserCreateViewModel model, string role)
         {
             using(var securityTransaction = securityCtx.Database.BeginTransaction())
             {
@@ -60,12 +58,12 @@ namespace BankApplication.Models.Repository
                         };
 
                         dataCtx.Persons.Add(person);
-                        await dataCtx.SaveChangesAsync();
+                        //await dataCtx.SaveChangesAsync();
 
                         user.PersonId = person.Id;
 
                         securityCtx.Users.Update(user);
-                        await securityCtx.SaveChangesAsync();
+                        //await securityCtx.SaveChangesAsync();
 
                         if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
                         {

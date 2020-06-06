@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankApplication.Models.ViewModels
 {
-    public class ClientCreateViewModel
+    public class UserCreateViewModel
     {
         [Required]
         public string Login { get; set; }

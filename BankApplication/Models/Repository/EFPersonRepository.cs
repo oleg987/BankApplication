@@ -20,9 +20,7 @@ namespace BankApplication.Models.Repository
         {
             var persons = ctx.Persons
                 .Include(p => p.Client)
-                .ThenInclude(c => c.Accounts)
                 .Include(p => p.Employee)
-                .ThenInclude(e => e.Position)
                 .Where(p => p.IsDeleted == false);
                 
             return persons;
@@ -33,10 +31,9 @@ namespace BankApplication.Models.Repository
             // SELECT * FROM PERSONS WHERE ID=1;
             var person = ctx.Persons
                 .Include(p => p.Client)
-                .ThenInclude(c => c.Accounts)
                 .Include(p => p.Employee)
-                .ThenInclude(e => e.Position)
-                .FirstOrDefault(p => p.Id == id && p.IsDeleted == false);
+                .FirstOrDefault(p => p.Id == id);
+
             return person;
         }
 
@@ -46,7 +43,6 @@ namespace BankApplication.Models.Repository
             //ctx.SaveChanges();
 
             ctx.Entry(person).State = EntityState.Modified;
-            ctx.SaveChanges();
         }
 
         public void Delete(int id)
@@ -62,7 +58,6 @@ namespace BankApplication.Models.Repository
             {
                 person.IsDeleted = true;
                 ctx.Entry(person).State = EntityState.Modified;
-                ctx.SaveChanges();
             }            
         }
 
@@ -74,14 +69,12 @@ namespace BankApplication.Models.Repository
             {
                 person.IsDeleted = false;
                 ctx.Entry(person).State = EntityState.Modified;
-                ctx.SaveChanges();
             }
         }
 
         public void Create(Person person)
         {
             ctx.Persons.Add(person);
-            ctx.SaveChanges();
         }
     }
 }
